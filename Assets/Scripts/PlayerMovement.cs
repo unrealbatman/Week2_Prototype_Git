@@ -48,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
             this.transform.localRotation = Quaternion.Euler(0,rotDir * rotationSpeed,0);
         }
 
-        // Use this if you want player to be like kirby with the ability to float around
+        // Use this if you want player to be like kirby/flappy bird with the ability to float around
         if(Input.GetButtonDown("Jump")) //space bar
         {
             rb.AddForce(new Vector2(0, jumpForce));
