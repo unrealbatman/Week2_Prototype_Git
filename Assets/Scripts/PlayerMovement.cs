@@ -25,10 +25,10 @@ public class PlayerMovement : MonoBehaviour
     // Go back to Title Screen if player dies (hits kill zone)
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("Kill")){
-            SceneManager.LoadScene("Title");
+            SceneManager.LoadScene("Title"); // Create and change to Try Again scene
         }
         if (other.CompareTag("Gate")){
-            SceneManager.LoadScene("Title");
+            SceneManager.LoadScene("Title"); // Create and change to Win scene
         }
     }
     // Update is called once per frame
@@ -44,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
             this.transform.localRotation = Quaternion.Euler(0,rotDir * rotationSpeed,0);
         }
 
-        if(Input.GetKey(KeyCode.W) )
+        if(Input.GetButtonDown("Jump"))
         {
             rb.AddForce(new Vector2(0, jumpForce));
         }
