@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField]
     private float rotationSpeed;
-
+    public int jumpForce = 10;
 
     // Start is called before the first frame update
     void Start()
@@ -25,6 +25,9 @@ public class PlayerMovement : MonoBehaviour
     // Go back to Title Screen if player dies (hits kill zone)
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("Kill")){
+            SceneManager.LoadScene("Title");
+        }
+        if (other.CompareTag("Gate")){
             SceneManager.LoadScene("Title");
         }
     }
@@ -39,6 +42,11 @@ public class PlayerMovement : MonoBehaviour
             float rotDir = axis == 1 ? 0 : 180;
             rb.velocity = new Vector2(axis * speed ,rb.velocity.y);
             this.transform.localRotation = Quaternion.Euler(0,rotDir * rotationSpeed,0);
+        }
+
+        if(Input.GetKey(KeyCode.W) )
+        {
+            rb.AddForce(new Vector2(0, jumpForce));
         }
 
 
