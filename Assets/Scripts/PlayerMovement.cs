@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -21,6 +22,12 @@ public class PlayerMovement : MonoBehaviour
         rb = this.gameObject.GetComponent<Rigidbody2D>();
     }
 
+    // Go back to Title Screen if player dies (hits kill zone)
+    private void OnTriggerEnter2D(Collider2D other) {
+        if (other.CompareTag("Kill")){
+            SceneManager.LoadScene("Title");
+        }
+    }
     // Update is called once per frame
     void Update()
     {
