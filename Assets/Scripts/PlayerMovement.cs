@@ -2,28 +2,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering.Universal;
+
 
 public class PlayerMovement : MonoBehaviour
 {
 
     private Rigidbody2D rb;
     private float axis;
+    private Light2D flashLight;
 
     [SerializeField]
     private float speed =1f;
 
     [SerializeField]
     private float rotationSpeed;
+
+    private bool canToggleLight = true;
+    private bool isGrounded = false;
+    private float flashlightTimer = 0f;
+
     public int jumpForce = 7;
     public LayerMask whatIsGround;
     public Transform feet;
-    bool grounded = false;
+    public float lightDuration = 5f;
 
-    
+
+
     // Start is called before the first frame update
     void Start()
     {
         rb = this.gameObject.GetComponent<Rigidbody2D>();
+        flashLight = this.GetComponentInChildren<Light2D>();
     }
 
     // Go back to Title Screen if player dies (hits kill zone)
@@ -49,11 +59,29 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Use this if you want player to be like kirby/flappy bird with the ability to float around
-        if(Input.GetButtonDown("Jump")) //space bar
+
+        if (Input.GetButtonDown("Jump") )
         {
             rb.AddForce(new Vector2(0, jumpForce));
+
+
+
         }
-        
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            rb.AddForce(new Vector2(0, jumpForce));
+            isGrounded = false; // Player has jumped, so they're not grounded anymore
+            canToggleLight = true; // Player has jumped, so they can now toggle the light
+        }
+
+        if (flashlightTimer > 0)
+        {
+            flashlightTimer -= Time.deltaTime; // Decrement the timer
+        }
+        else
+        {
+            flashLight.enabled = false; // Turn off the flashlight when timer reaches 0
+        }
 
         // Use this if you want player to only be able to jump if they are grounded (on a platform)
         /*
@@ -64,4 +92,34 @@ public class PlayerMovement : MonoBehaviour
         }
         */
     }
+
+
+
+
+
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.transform.CompareTag("Ground"))
+        {
+            isGrounded = true; // Player has landed on the ground
+            if (canToggleLight)
+            {
+                flashLight.enabled = true; // Activate the flashlight
+                flashlightTimer = lightDuration; // Reset the timer
+                canToggleLight = false; // Player cannot toggle light until they jump again
+            }
+        }
+    }
+
+
+
+
+
 }
+
+
+
+
+
+
