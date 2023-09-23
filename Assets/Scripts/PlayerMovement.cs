@@ -79,17 +79,11 @@ public class PlayerMovement : MonoBehaviour
             if (rb.velocityY > jumpForce_max) rb.velocityY = jumpForce_max;
             animator.SetTrigger("Jump");
             audioSource.Play();
-        }
-
-
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            rb.AddForce(new Vector2(0, jumpForce));
-            isGrounded = false; // Player has jumped, so they're not grounded anymore
-            canToggleLight = true; // Player has jumped, so they can now toggle the light
-            animator.SetTrigger("Jump");
-
-        }
+            if(isGrounded)
+            {
+                isGrounded = false; // Player has jumped, so they're not grounded anymore
+                canToggleLight = true; // Player has jumped, so they can now toggle the light
+            }
         if (rb.velocityY < terminalVelocity) rb.velocityY = terminalVelocity;
 
         if (flashlightTimer > 0) flashlightTimer -= Time.deltaTime; // Decrement the timer
