@@ -23,8 +23,6 @@ public class PlayerMovement : MonoBehaviour
     private float flashlightTimer = 0f;
 
     public int jumpForce = 7;
-    public LayerMask whatIsGround;
-    public Transform feet;
     public float lightDuration = 5f;
 
 
@@ -38,9 +36,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Go back to Title Screen if player dies (hits kill zone)
     private void OnTriggerEnter2D(Collider2D other) {
-        if (other.CompareTag("Kill")){
-            SceneManager.LoadScene("Title"); // Create and change to Try Again scene
-        }
+
         if (other.CompareTag("Gate")){
             SceneManager.LoadScene("Title"); // Create and change to Win scene
         }
@@ -63,9 +59,6 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButtonDown("Jump") )
         {
             rb.AddForce(new Vector2(0, jumpForce));
-
-
-
         }
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
@@ -109,6 +102,10 @@ public class PlayerMovement : MonoBehaviour
                 flashlightTimer = lightDuration; // Reset the timer
                 canToggleLight = false; // Player cannot toggle light until they jump again
             }
+        }
+        if (collision.transform.CompareTag("Kill"))
+        {
+            SceneManager.LoadScene("Title"); // Create and change to Try Again scene
         }
     }
 
