@@ -90,22 +90,6 @@ public class PlayerMovement : MonoBehaviour
             animator.SetTrigger("Jump");
 
         }
-
-
-        if (flashlightTimer > 0)
-        {
-            flashlightTimer -= Time.deltaTime; // Decrement the timer
-        }
-        else
-        {
-            flashLight.enabled = false; // Turn off the flashlight when timer reaches 0
-        {
-            flashlightTimer -= Time.deltaTime; // Decrement the timer
-        }
-        else
-        {
-            flashLight.enabled = false; // Turn off the flashlight when timer reaches 0
-        }
         if (rb.velocityY < terminalVelocity) rb.velocityY = terminalVelocity;
 
         if (flashlightTimer > 0) flashlightTimer -= Time.deltaTime; // Decrement the timer
