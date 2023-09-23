@@ -22,18 +22,26 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded = false;
     private float flashlightTimer = 0f;
     private Animator animator;
-
+    private Camera cam;
+    private AudioSource audioSource;
     public int jumpForce = 7;
     public float lightDuration = 5f;
 
 
 
+
     // Start is called before the first frame update
+    [System.Obsolete]
     void Start()
     {
         rb = this.gameObject.GetComponent<Rigidbody2D>();
         flashLight = this.GetComponentInChildren<Light2D>();
         animator = GetComponent<Animator>();
+        cam = FindObjectOfType<Camera>();
+        //cam.GetComponent<AudioSource>().Play();
+        cam.GetComponent<AudioSource>().time = 0.5f;
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Go back to Title Screen if player dies (hits kill zone)
@@ -72,20 +80,19 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") )
         {
+            if (isGrounded)
+            {
+                isGrounded = false; // Player has jumped, so they're not grounded anymore
+                canToggleLight = true; // Player has jumped, so they can now toggle the light
+            }
             rb.AddForce(new Vector2(0, jumpForce));
             animator.SetTrigger("Jump");
+            audioSource.Play();
 
         }
 
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            rb.AddForce(new Vector2(0, jumpForce));
-            isGrounded = false; // Player has jumped, so they're not grounded anymore
-            canToggleLight = true; // Player has jumped, so they can now toggle the light
-            animator.SetTrigger("Jump");
 
-        }
 
 
         if (flashlightTimer > 0)
