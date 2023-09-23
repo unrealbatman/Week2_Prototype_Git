@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
 {
 
     private Rigidbody2D rb;
+    private SpriteRenderer sr;
     private float axis;
     private Light2D flashLight;
 
@@ -23,7 +24,9 @@ public class PlayerMovement : MonoBehaviour
     private float flashlightTimer = 0f;
     private Animator animator;
 
+    public int terminalVelocity = -25;
     public int jumpForce = 7;
+    public int jumpForce_max = 14;
     public float lightDuration = 5f;
 
 
@@ -32,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rb = this.gameObject.GetComponent<Rigidbody2D>();
+        sr = this.gameObject.GetComponent<SpriteRenderer>();
         flashLight = this.GetComponentInChildren<Light2D>();
         animator = GetComponent<Animator>();
     }
@@ -49,62 +53,32 @@ public class PlayerMovement : MonoBehaviour
         axis = Input.GetAxisRaw("Horizontal");
 
 
-        if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+        animator.SetInteger("speed", 0);
+        if (axis != 0)
         {
-            float rotDir = axis == 1 ? 0 : 180;
+            //float rotDir = axis == 1 ? 0 : 180;
+            //this.transform.localRotation = Quaternion.Euler(0,rotDir * rotationSpeed,0);
             rb.velocity = new Vector2(axis * speed ,rb.velocity.y);
-            this.transform.localRotation = Quaternion.Euler(0,rotDir * rotationSpeed,0);
+            if (axis < 0) sr.flipX = true;
+            else sr.flipX = false;
+            if (isGrounded == true) animator.SetInteger("speed", (int)Mathf.Abs(rb.velocity.x));
         }
-        if((axis>0 || axis<0) && isGrounded==true)
-        {
-            animator.SetInteger("speed", Mathf.Abs((int)rb.velocity.x));
-
-
-        }
-        else
-        {
-            animator.SetInteger("speed", 0);
-
-
-        }
-
-        // Use this if you want player to be like kirby/flappy bird with the ability to float around
 
         if (Input.GetButtonDown("Jump") )
         {
             rb.AddForce(new Vector2(0, jumpForce));
+            if (rb.velocityY > jumpForce_max) rb.velocityY = jumpForce_max;
             animator.SetTrigger("Jump");
-
+            if (isGrounded)
+            {
+                isGrounded = false; // Player has jumped, so they're not grounded anymore
+                canToggleLight = true; // Player has jumped, so they can now toggle the light
+            }
         }
+        if (rb.velocityY < terminalVelocity) rb.velocityY = terminalVelocity;
 
-
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            rb.AddForce(new Vector2(0, jumpForce));
-            isGrounded = false; // Player has jumped, so they're not grounded anymore
-            canToggleLight = true; // Player has jumped, so they can now toggle the light
-            animator.SetTrigger("Jump");
-
-        }
-
-
-        if (flashlightTimer > 0)
-        {
-            flashlightTimer -= Time.deltaTime; // Decrement the timer
-        }
-        else
-        {
-            flashLight.enabled = false; // Turn off the flashlight when timer reaches 0
-        }
-
-        // Use this if you want player to only be able to jump if they are grounded (on a platform)
-        /*
-        grounded = Physics2D.OverlapCircle(feet.position, .3f, whatIsGround);
-        if(Input.GetButtonDown("Jump") && grounded)
-        {
-            rb.AddForce(new Vector2(0, jumpForce));
-        }
-        */
+        if (flashlightTimer > 0) flashlightTimer -= Time.deltaTime; // Decrement the timer
+        else flashLight.enabled = false; // Turn off the flashlight when timer reaches 0
     }
 
 
