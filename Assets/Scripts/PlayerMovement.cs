@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     private bool canToggleLight = true;
     private bool isGrounded = false;
     private float flashlightTimer = 0f;
+    private Animator animator;
 
     public int jumpForce = 7;
     public float lightDuration = 5f;
@@ -32,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = this.gameObject.GetComponent<Rigidbody2D>();
         flashLight = this.GetComponentInChildren<Light2D>();
+        animator = GetComponent<Animator>();
     }
 
     // Go back to Title Screen if player dies (hits kill zone)
@@ -53,19 +55,38 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(axis * speed ,rb.velocity.y);
             this.transform.localRotation = Quaternion.Euler(0,rotDir * rotationSpeed,0);
         }
+        if((axis>0 || axis<0) && isGrounded==true)
+        {
+            animator.SetInteger("speed", Mathf.Abs((int)rb.velocity.x));
+
+
+        }
+        else
+        {
+            animator.SetInteger("speed", 0);
+
+
+        }
 
         // Use this if you want player to be like kirby/flappy bird with the ability to float around
 
         if (Input.GetButtonDown("Jump") )
         {
             rb.AddForce(new Vector2(0, jumpForce));
+            animator.SetTrigger("Jump");
+
         }
+
+
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rb.AddForce(new Vector2(0, jumpForce));
             isGrounded = false; // Player has jumped, so they're not grounded anymore
             canToggleLight = true; // Player has jumped, so they can now toggle the light
+            animator.SetTrigger("Jump");
+
         }
+
 
         if (flashlightTimer > 0)
         {
