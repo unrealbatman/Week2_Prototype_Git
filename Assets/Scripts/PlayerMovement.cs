@@ -43,9 +43,7 @@ public class PlayerMovement : MonoBehaviour
         flashLight = this.GetComponentInChildren<Light2D>();
         animator = GetComponent<Animator>();
         cam = FindObjectOfType<Camera>();
-        //cam.GetComponent<AudioSource>().Play();
         cam.GetComponent<AudioSource>().time = 0.5f;
-
         audioSource = GetComponent<AudioSource>();
     }
 
